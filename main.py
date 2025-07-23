@@ -12,7 +12,7 @@ from starlette.middleware.cors import CORSMiddleware
 from bleach import clean as sanitize_html
 import re
 
-DB_PATH = os.getenv("DB_PATH", "sqlite:///./reviews.db")
+DB_PATH = os.getenv("DB_PATH", "reviews.db")
 MAX_REVIEW_LENGTH = int(os.getenv("MAX_REVIEW_LENGTH", 1000))
 positive_patterns = [r"\bхорош\w*", r"\bлюблю\w*", ]
 negative_patterns = [r"\bплох\w*", r"\bненавиж\w*", ]
@@ -60,7 +60,7 @@ def init_db():
 
 def get_db():
     """A function that opens a connection to a database for subsequent work with it."""
-    conn = sqlite3.connect(DB_PATH)
+    conn = sqlite3.connect(DB_PATH, check_same_thread=False)
     try:
         yield conn
     finally:
@@ -135,4 +135,4 @@ async def list_reviews(
 if __name__ == "__main__":
     init_db()
     import uvicorn
-    uvicorn.run("main:app", host="127.0.0.1", port=8000, log_level="info", reload=True)
+    uvicorn.run("main:app", host="0.0.0.0", port=8000, log_level="info", reload=True)
